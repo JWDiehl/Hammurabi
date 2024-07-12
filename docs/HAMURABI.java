@@ -161,7 +161,7 @@ public class HAMURABI {
 	}
 
 	public int starvationDeaths(int i, int i1) {
-        return i;
+        return 0;
     }
 
 	public boolean uprising(int i, int i1) {

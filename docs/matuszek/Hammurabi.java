@@ -22,12 +22,18 @@ public class Hammurabi {
         int acresOfLand = 1000;
         int landValue = 19; //bushels/acre
         int year = 1;
+        boolean gameOn = true;
 
-        while (year <= 10) {
+        while (gameOn && year <= 10) {
             System.out.printf("\n0 Great Hammurabi!\n" +
-                            "You are in Year 1 of your ten year rule.\n" +
-                            "In the previous year 0 people starved to death.\n" +
-                            "In the previous year 5 people entered the kingdom.\n" +
+                            "You are in Year %d of your ten year rule.\n");
+
+                //Display previous year's statistics
+                if (year>1) {
+                    System.out.printf("In the previous year %d people starved to death.\n", previousStarvatoinDeaths);
+                    System.out.printf( "In the previous year %d people entered the kingdom.\n", previousImmigrants);
+                }
+
                             "The population is now 100.\n" +
                             "We harvested 3000 bushels at 3 bushels per acre.\n" +
                             "Rats destroyed 200 bushels, leaving 2800 bushels in storage.\n" +

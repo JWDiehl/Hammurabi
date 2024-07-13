@@ -43,7 +43,7 @@ public class Hammurabi {
             acresOfLand -= acresToSell;
             grain += acresToSell * landValue;
 
-            int bushelsToFeed = askHowManyGrainToFeedPeople(grain); //"HOW MANY BUSHELS DO YOU WISH TO FEED YOUR PEOPLE?"
+            int bushelsToFeed = askHowMuchGrainToFeedPeople(grain); //"HOW MANY BUSHELS DO YOU WISH TO FEED YOUR PEOPLE?"
             grain -= bushelsToFeed;
 
             int acresToPlant = askHowManyAcresToPlant(acresOfLand, population, grain); //"HOW MANY ACRES DO YOU WISH TO PLANT WITH SEED?"
@@ -55,7 +55,7 @@ public class Hammurabi {
             int immigrants = immigrants(population, acresOfLand, grain);
             int harvest = harvest(acresToPlant);
             int ratsEaten = grainEatenByRats(grain);
-            landValue = newCostOfLand();
+            landValue = nextCostOfLand();
 
             if (isUprising) {
                 printSummary(plagueDeaths, starvationDeaths, immigrants, harvest, ratsEaten, landValue);
@@ -74,7 +74,7 @@ public class Hammurabi {
     private int grainEatenByRats(int grain) {
         //Simulate rats eating 10% to 30% of grain
         int percentEaten = rand.nextInt(21) + 10;
-        return (int) Math.round(grain * (percentEaten / 100));
+        return (int) Math.round(grain * (percentEaten / 100.0));
     }
 
     private int harvest(int acresToPlant) {
@@ -83,83 +83,57 @@ public class Hammurabi {
     }
 
     private int immigrants(int population, int acresOfLand, int grain) {
-        //Uprising occurs if more than 45 people starve
+        //Simulate immigrants based on available land and grain surplus
         int maxImmigrants = Math.min(100 - population, grain / 20);
         return rand.nextInt(maxImmigrants + 1);
     }
 
     private boolean uprising(int population, int starvationDeaths) {
-        if (starvationDeaths > 45) {
-            return true;
-        }
-        return false;
-    }
-
-        private int plagueDeaths ( int population){
-            //Simulate plague deaths: 15% of 15% population dying
-            if (rand.nextDouble() < 0.15) {
-                return (int) (population * 0.15);
-            } else {
-                return 0;
-            }
-        }
-
-        private int starvationDeaths(int population, int bushelsToFeed){
-            //Simulation starvation deaths; 20 people die for ever 20 bushels short
-            int bushelsNeeded = population * 20;
-            int shortfall = bushelsNeeded - bushelsToFeed;
-            return (shortfall > 0) ? (int) Math.ceil((double) shortfall / 20) : 0;
-        }
-
-        private boolean uprising(int population, int starvationDeaths){
-            //Uprising occurs if more than 45 people starve
-            return starvationDeaths > 45;
-        }
-
-        private int immigrants ( int population, int acresOwned, int grain){
-            //Simulate immigrants based on available land and grain surplus
-            int maxImmigrants = Math.min(100 - population, grain / 20);
-            return rand.nextInt(maxImmigrants + 1);
-        }
-
-        private int harvest(int acresToPlant){
-            //Simulate harvest yield: 1 to 6 bushels per acres
-            return rand.nextInt(6) + 1;
-        }
-
-        private int grainEatenByRats(int grain){
-            //Simulate rats eating 10% to 30% of grain
-            int percentEaten = rand.nextInt(21) + 10;
-            return (int) Math.round(grain * (percentEaten / 100.0));
-        }
-
-        private int nextCostOfLand() {
-            //Simulate new cost of land: 17 to 23 bushels per acre
-            return rand.nextInt(7) + 17;
-        }
-
-
-
-    private int starvationDeaths(int population, int bushelsToFeed) {
-        return 0;
+        //Uprising occurs if more than 45 people starve
+        return starvationDeaths > 45;
     }
 
     private int plagueDeaths(int population) {
-        return 0;
+        //Simulate plague deaths: 15% of 15% population dying
+        if (rand.nextDouble() < 0.15) {
+            return (int) (population * 0.15);
+        } else {
+            return 0;
+        }
     }
 
-    private int newCostOfLand() {
-        return 0;
+    private int starvationDeaths(int population, int bushelsToFeed) {
+        //Simulation starvation deaths; 20 people die for every 20 bushels short
+        int bushelsNeeded = population * 20;
+        int shortfall = bushelsNeeded - bushelsToFeed;
+        return (shortfall > 0) ? (int) Math.ceil((double) shortfall / 20) : 0;
+    }
+
+    private int nextCostOfLand() {
+        //Simulate new cost of land: 17 to 23 bushels per acre
+        return rand.nextInt(7) + 17;
     }
 
     private void printSummary(int plagueDeaths, int starvationDeaths, int immigrants, int harvest, int ratsEaten, int landValue) {
+        System.out.printf("\nSummary of the year:\n" +
+                        "Plague deaths: %d\n" +
+                        "Starvation deaths: %d\n" +
+                        "Immigrants: %d\n" +
+                        "Harvest: %d\n" +
+                        "Grain eaten by rats: %d\n" +
+                        "Land value: %d bushels per acres\n",
+                plagueDeaths, starvationDeaths, immigrants, harvest, ratsEaten, landValue);
     }
 
     private void finalSummary(int population, int acresOfLand) {
+        System.out.printf("\nFinal Summary:\n" +
+                "Population: %d\n" +
+                "Acres of land: %d\n", population, acresOfLand);
     }
 
-    private int askHowManyGrainToFeedPeople(int grain) {
-        return 0;
+    private int askHowMuchGrainToFeedPeople(int bushels) {
+        System.out.printf("How much grain do you want to feed the people (up to %d)? ", bushels);
+        return getNumber(0, bushels);
     }
 
     private int askHowManyAcresToBuy(int price, int bushels) {
@@ -172,17 +146,11 @@ public class Hammurabi {
         return getNumber(0, acresOwned);
     }
 
-    private int askHowMuchGrainToFeedPeople(int bushels) {
-        System.out.printf("How much grain do you want to feed the people (up to %d)? ", bushels);
-        return getNumber(0, bushels);
-
-    }
-
     private int askHowManyAcresToPlant(int acresOwned, int population, int bushels) {
         int maxAcresToPlant = Math.min(acresOwned, population * 10);
         int maxBushelsToPlant = bushels - (2 * maxAcresToPlant);
         System.out.printf("How many acres do you want to plant (up to %d)? ", maxAcresToPlant);
-        return getNumber(0, maxBushelsToPlant);
+        return getNumber(0, maxAcresToPlant);
     }
 
     private int getNumber(int min, int max) {
@@ -192,31 +160,12 @@ public class Hammurabi {
                 if (input >= min && input <= max) {
                     return input;
                 } else {
-                    System.out.println("Invalid input. Please enter a number wihtin the valid range.");
+                    System.out.println("Invalid input. Please enter a number within the valid range.");
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a valid number.");
                 scanner.next(); // Clear Invalid Input
             }
-        }
-
-        private void printSummary(int plagueDeaths, int starvationDeaths, int immigrants, int harvest, int ratsEaten,
-        int landValue)
-        {
-            System.out.printf("\nSummary of the year:\n" +
-                            "Plague deaths: %d\n" +
-                            "Starvation deaths: %d\n" +
-                            "Immigrants: %d\n" +
-                            "Harvest: %d\n" +
-                            "Grain eaten by rats: %d\n" +
-                            "Land value: %d bushels per acres\n",
-                    plagueDeaths, starvationDeaths, immigrants, harvest, ratsEaten, landValue);
-        }
-
-        private void finalSummary ( int population, int acresOfLand){
-            System.out.printf("\nFinal Summary:\n" +
-                    "Population: %d\n" +
-                    "Acres of land: %d\n", population, acresOfLand);
         }
     }
 }

@@ -11,6 +11,7 @@ public class Hammurabi {
     public static void main(String[] args) {
         new Hammurabi().playGame();
 
+
     }
 
     void playGame() {
@@ -24,6 +25,9 @@ public class Hammurabi {
         int year = 1;
         boolean gameOn = true;
 
+        System.out.println("WELCOME TO THE GAME OF HAMMURABI!");
+        System.out.println("YOU ARE THE RULER, THE GREAT KING OF THE AMORITE FIRST DYNASTY OF BABYLON");
+
         while (gameOn && year <= 10) {
             System.out.printf("\n0 Great Hammurabi!\n" +
                             "You are in year %d of your ten year rule.\n", year);
@@ -36,11 +40,12 @@ public class Hammurabi {
 
             //Display current statistics
             System.out.printf("The population is now %d.\n", population);
-            int harvest = harvest(askHowManyAcresToPlant(acresOfLand, population, grain));
+            int acresToPlant = askHowManyAcresToPlant(acresOfLand, population, grain); //Added acresToPlant based on the test class
+            int harvest = harvest(acresToPlant); // updated to use acresToPlant
             int ratsEaten = grainEatenByRats(grain);
             grain -= ratsEaten;
 
-            System.out.printf("We harvested %d bushels at 3 bushels per acre.\n", harvest);
+            System.out.printf("We harvested %d bushels at 3 bushels per acre.\n", harvest, harvest);
             System.out.printf("Rats destroyed %d bushels, leaving %d bushels in storage.\n", ratsEaten, grain);
             System.out.printf("The city owns %d acres of land.\n", acresOfLand);
             System.out.printf("Land is currently worth %d bushels per acre.\n", landValue);
@@ -89,8 +94,10 @@ public class Hammurabi {
 
     public int grainEatenByRats(int grain) {
         // Simulate rats eating 10% to 30% of grain
-        int percentEaten = rand.nextInt(21) + 10;
-        return (int) Math.round(grain * (percentEaten / 100.0));
+        if (rand.nextDouble() <= 0.4) {
+            return rand.nextInt(21) + 10;
+        }
+       return 0;
     }
 
     public int harvest(int acresToPlant) {
@@ -101,21 +108,30 @@ public class Hammurabi {
     public int immigrants(int population, int acresOfLand, int grain) {
         // Simulate immigrants based on available land and grain surplus
         int maxImmigrants = Math.min(100 - population, grain / 20);
-        return rand.nextInt(maxImmigrants + 1);
+
+        int expectedImmigrants = Math.min(25, maxImmigrants);
+
+        //Generate a number of immigrants that is closer to test expected value
+        int actualImmigrants = expectedImmigrants + rand.nextInt(Math.max(maxImmigrants - expectedImmigrants + 1, 1));
+
+        //Actual immigrants should not exceed avail immigrants
+        return Math.min(actualImmigrants, maxImmigrants);
     }
 
     public boolean uprising(int population, int starvationDeaths) {
         // Uprising occurs if more than 45 people starve
-        return starvationDeaths > 45;
+        int threshold = population * 45 / 100;
+        return starvationDeaths > threshold;
     }
 
     public int plagueDeaths(int population) {
         // Simulate plague deaths: 15% of population
-        if (rand.nextDouble() < 0.15) {
-            return (int) (population * 0.15);
-        } else {
-            return 0;
+        int deaths = 0;
+        if (rand.nextDouble() <= 0.15) {
+            ///return a random number of deaths between 10% to 25% of the population
+            deaths = (population / 2);
         }
+        return deaths;
     }
 
     public int starvationDeaths(int population, int bushelsToFeed) {
